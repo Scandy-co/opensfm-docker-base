@@ -5,7 +5,6 @@ FROM ubuntu:14.04
 RUN apt-get update \
     && apt-get install -y \
         build-essential \
-        cmake \
         git \
         libatlas-base-dev \
         libboost-python-dev \
@@ -25,6 +24,17 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Get the latest CMake version
+RUN \
+     version=3.9.6 \
+  && mkdir ~/temp \
+  && cd ~/temp \
+  && wget https://cmake.org/files/v3.9/cmake-$version.tar.gz \
+  && tar -xzvf cmake-$version.tar.gz \
+  && cd cmake-$version/ \
+  && ./bootstrap \
+  && make -j4 \
+  && make install
 
 # Install Ceres from source
 RUN \
@@ -43,10 +53,18 @@ RUN \
 # Install opengv from source
 RUN \
     mkdir -p /source && cd /source && \
-    git clone https://github.com/paulinus/opengv.git && \
+    git clone https://github.com/Scandy-co/opengv.git && \
     cd /source/opengv && \
     mkdir -p build && cd build && \
     cmake .. -DBUILD_TESTS=OFF -DBUILD_PYTHON=ON && \
-    make install && \
+    make -j4 install && \
     cd / && \
     rm -rf /source/opengv
+
+# Build OpenSFM
+RUN \
+    mkdir -p /source && cd /source && \
+    git clone https://github.com/Scandy-co/opensfm.git && \
+    cd /source/opensfm \
+    && pip install -r requirements.txt \
+    && python setup.py build
