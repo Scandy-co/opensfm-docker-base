@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 
 
 # Install apt-getable dependencies
@@ -53,7 +53,7 @@ RUN \
 # Install opengv from source
 RUN \
     mkdir -p /source && cd /source && \
-    git clone https://github.com/Scandy-co/opengv.git && \
+    git clone https://github.com/paulinus/opengv.git && \
     cd /source/opengv && \
     mkdir -p build && cd build && \
     cmake .. -DBUILD_TESTS=OFF -DBUILD_PYTHON=ON && \
